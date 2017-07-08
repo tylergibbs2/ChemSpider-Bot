@@ -78,7 +78,7 @@ async def match_result(results, ctx):
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(game=discord.Game(name='!help'))
+    await bot.change_presence(game=discord.Game(name='c search'))
     print('ready')
 
 @bot.command()
