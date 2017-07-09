@@ -112,4 +112,34 @@ async def search(ctx, *, query : str):
 async def logout(ctx):
     await bot.logout()
 
+@bot.command(hidden=True)
+@commands.is_owner()
+async def debug(ctx, *, code: str):
+    """Evaluates code."""
+
+    code = code.strip('` ')
+    python = '```py\n{}\n```'
+    result = None
+
+    env = {
+        'bot': bot,
+        'ctx': ctx,
+        'message': ctx.message,
+        'guild': ctx.guild,
+        'channel': ctx.channel,
+        'author': ctx.author
+    }
+
+    env.update(globals())
+
+    try:
+        result = eval(code, env)
+        if inspect.isawaitable(result):
+            result = await result
+    except Exception as e:
+        await ctx.send(python.format(type(e).__name__ + ': ' + str(e)))
+        return
+
+    await ctx.send(python.format(result))
+
 bot.run(creds['token'])
