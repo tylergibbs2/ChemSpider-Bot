@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import inspect
 
 from utils import config
 from chemspipy import ChemSpider
