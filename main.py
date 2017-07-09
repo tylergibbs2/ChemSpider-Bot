@@ -85,15 +85,15 @@ async def on_ready():
     print('ready')
 
 @bot.command()
-async def search(ctx, *, search : str):
+async def search(ctx, *, query : str):
     """Searches the ChemSpider database for substances."""
 
-    results = cs.search(search)
+    results = cs.search(query)
 
     await bot.loop.run_in_executor(None, results.wait)
 
     if not results:
-        return await ctx.send(f'{search} not found.')
+        return await ctx.send(f'{query} not found.')
 
     def user_check(msg):
         return msg.author == ctx.author
@@ -101,7 +101,7 @@ async def search(ctx, *, search : str):
     if len(results) != 1:
         result = await match_result(results, ctx)
         if not result:
-            return await ctx.send(f'Matching failed for {search}, likely timed out or cancelled.')
+            return await ctx.send(f'Matching failed for {query}, likely timed out or cancelled.')
     else:
         result = results[0]
 
