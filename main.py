@@ -1,3 +1,4 @@
+import re
 import discord
 import asyncio
 import inspect
@@ -22,13 +23,28 @@ five = '\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}'
 cancel = '\N{REGIONAL INDICATOR SYMBOL LETTER X}'
 num_list = [one, two, three, four, five, cancel]
 
+def format_formula(formula):
+    """Takes a molecular formula and makes the numbers subscripts."""
+
+    def numrepl(match):
+        num = match.group(1)
+        num_list = [int(i) for i in str(num)]
+        new_nums = []
+        for i in num_list:
+            new_nums.append(chr(0x2080 + i))
+        return ''.join(new_nums)
+
+    sub = re.sub(r'\_\{*([0-9]+)\}', numrepl, formula)
+
+    return sub
+
 def form_embed(compound):
     em = discord.Embed()
     em.color = 0xffa73d
 
     em.title = compound.common_name
     em.url = f'{base_url}Chemical-Structure.{compound.csid}.html'
-    em.description = compound.molecular_formula
+    em.description = format_formula(compound.molecular_formula)
 
     em.add_field(name='Molecular Weight', value=str(compound.molecular_weight) + 'g')
 
