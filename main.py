@@ -104,6 +104,29 @@ async def search(ctx, *, search : str):
 
     await ctx.send(embed=form_embed(result))
 
+@bot.command()
+async def mass(ctx, mass : int, allowed_range : int=0.01):
+    """Searches for a compound with the given mass."""
+    results = cs.search_by_mass(mass, allowed_range)
+
+    await bot.loop.run_in_executor(None, results.wait)
+
+    if not results:
+        return await ctx.send('Compound not found.')
+
+    def user_check(msg):
+        return msg.author == ctx.author
+
+    if len(results) != 1:
+        result = await match_result(results, ctx)
+        if not result:
+            return await ctx.send('Matching failed, likely timed out or cancelled.')
+    else:
+        result = results[0]
+
+    await ctx.send(embed=form_embed(result))
+
+
 @bot.command(hidden=True)
 @commands.is_owner()
 async def logout(ctx):
