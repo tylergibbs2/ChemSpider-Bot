@@ -8,7 +8,7 @@ from discord.ext import commands
 description = 'A simple chemistry bot for searching the ChemSpider api.'
 creds = config.Config('credentials.json')
 
-bot = commands.Bot(command_prefix='c ', description=description)
+bot = commands.Bot(command_prefix=['c ', 'C '], description=description)
 cs = ChemSpider(creds['chemspider'])
 
 one = '\N{DIGIT ONE}\N{COMBINING ENCLOSING KEYCAP}'
