@@ -8,6 +8,8 @@ from discord.ext import commands
 description = 'A simple chemistry bot for searching the ChemSpider api.'
 creds = config.Config('credentials.json')
 
+base_url = r'http://www.chemspider.com/'
+
 bot = commands.Bot(command_prefix=['c ', 'C '], description=description)
 cs = ChemSpider(creds['chemspider'])
 
@@ -24,6 +26,7 @@ def form_embed(compound):
     em.color = 0xffa73d
 
     em.title = compound.common_name
+    em.url = f'{base_url}Chemical-Structure.{compound.csid}.html'
     em.description = compound.molecular_formula
 
     em.add_field(name='Molecular Weight', value=str(compound.molecular_weight) + 'g')
