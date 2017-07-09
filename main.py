@@ -93,7 +93,7 @@ async def search(ctx, *, search : str):
     await bot.loop.run_in_executor(None, results.wait)
 
     if not results:
-        return await ctx.send('Compound not found.')
+        return await ctx.send(f'{search} not found.')
 
     def user_check(msg):
         return msg.author == ctx.author
@@ -101,7 +101,7 @@ async def search(ctx, *, search : str):
     if len(results) != 1:
         result = await match_result(results, ctx)
         if not result:
-            return await ctx.send('Matching failed, likely timed out or cancelled.')
+            return await ctx.send(f'Matching failed for {search}, likely timed out or cancelled.')
     else:
         result = results[0]
 
