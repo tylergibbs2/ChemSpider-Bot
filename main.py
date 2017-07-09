@@ -61,7 +61,7 @@ async def match_result(results, ctx):
         return usr.id == ctx.author.id and rxn.message.id == list_msg.id
 
     try:
-        reaction, member = await bot.wait_for('reaction_add', check=user_check)
+        reaction, member = await bot.wait_for('reaction_add', check=user_check, timeout=60)
     except asyncio.TimeoutError:
         await list_msg.delete()
         return
