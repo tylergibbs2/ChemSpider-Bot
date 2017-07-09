@@ -26,7 +26,7 @@ def form_embed(compound):
     em.title = compound.common_name
     em.description = compound.molecular_formula
 
-    em.add_field(name='Molecular Weight', value=compound.molecular_weight)
+    em.add_field(name='Molecular Weight', value=str(compound.molecular_weight) + 'g')
 
     em.set_image(url=compound.image_url)
 
