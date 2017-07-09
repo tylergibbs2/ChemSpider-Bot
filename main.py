@@ -28,11 +28,8 @@ def format_formula(formula):
 
     def numrepl(match):
         num = match.group(1)
-        num_list = [int(i) for i in str(num)]
-        new_nums = []
-        for i in num_list:
-            new_nums.append(chr(0x2080 + i))
-        return ''.join(new_nums)
+        subscripts = [chr(0x2080 + int(i)) for i in str(num)]
+        return ''.join(subscripts)
 
     sub = re.sub(r'\_\{*([0-9]+)\}', numrepl, formula)
 
