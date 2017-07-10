@@ -174,7 +174,7 @@ async def meme(ctx):
     if not meme_channel:
         return
 
-    message = random.choice(await channel.history(limit=1000).flatten())
+    message = random.choice(await meme_channel.history(limit=1000).flatten())
 
     if message.attachments:
         em = discord.Embed()
