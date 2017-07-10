@@ -167,13 +167,11 @@ async def search(ctx, *, query : str):
 @bot.command()
 async def meme(ctx):
     """Sends a random message from the #chemistry-memes channel."""
-    if ctx.guild.id != 331215977117253634:
-        print('bad server')
+    if ctx.guild.id != 331174943679315979:
         return
 
     meme_channel = discord.utils.get(ctx.guild.text_channels, name='chemistry-memes')
     if not meme_channel:
-        print('no meme channel')
         return
 
     message = random.choice(await channel.history(limit=1000).flatten())
