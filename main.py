@@ -59,12 +59,13 @@ async def match_result(results, ctx):
     em.color = 0xffa73d
 
     em.title = 'Multiple results found. Click the reaction for your result.'
+    em.description = 'Creating match form...'
 
     result_pages = [results[i:i+5] for i in range(0, len(results), 5)]
     page_count = len(result_pages)
     page = 0
 
-    list_msg = await ctx.send('Creating match form...')
+    list_msg = await ctx.send(embed=em)
 
     for reaction in num_list[:len(result_pages[0])]:
         await list_msg.add_reaction(reaction)
@@ -105,8 +106,8 @@ async def match_result(results, ctx):
             matching = False
         elif index == 6:
             page += 1
-            if page > page_count:
-                page = page_count
+            if page > page_count-1:
+                page = page_count-1
         elif index == 5:
             page -= 1
             if page < 0:
