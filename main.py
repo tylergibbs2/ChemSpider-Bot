@@ -118,7 +118,10 @@ async def match_result(results, ctx):
         elif 0 <= index <= 4:
             break
 
-        await list_msg.remove_reaction(reaction.emoji, member)
+        try:
+            await list_msg.remove_reaction(reaction.emoji, member)
+        except:
+            pass
 
     else:
         await list_msg.delete()
