@@ -187,10 +187,8 @@ async def meme(ctx):
         if attachment.height:
             em.set_image(url=f'attachment://{attachment.filename}')
 
-        try:
-            await ctx.send(file=discord.File(b, attachment.filename), embed=em)
-        except:
-            pass
+        await ctx.send(file=discord.File(b, attachment.filename), embed=em)
+
         return
 
     await ctx.send(message.content)
