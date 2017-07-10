@@ -176,22 +176,20 @@ async def meme(ctx):
 
     message = random.choice(await meme_channel.history(limit=1000).flatten())
 
-    if message.attachments:
-        em = discord.Embed()
-        em.color = 0xffa73d
+    while not message.attachments:
+        message = random.choice(await meme_channel.history(limit=1000).flatten())
 
-        attachment = message.attachments[0]
-        b = io.BytesIO()
-        await attachment.save(b)
-        b.seek(0)
-        if attachment.height:
-            em.set_image(url=f'attachment://{attachment.filename}')
+    em = discord.Embed()
+    em.color = 0xffa73d
 
-        await ctx.send(file=discord.File(b, attachment.filename), embed=em)
+    attachment = message.attachments[0]
+    b = io.BytesIO()
+    await attachment.save(b)
+    b.seek(0)
+    if attachment.height:
+        em.set_image(url=f'attachment://{attachment.filename}')
+    await ctx.send(file=discord.File(b, attachment.filename), embed=em)
 
-        return
-
-    await ctx.send(message.content)
 
 @bot.command(hidden=True)
 @commands.is_owner()
