@@ -4,6 +4,7 @@ import random
 import discord
 import asyncio
 import inspect
+import traceback
 
 from utils import config
 from chemspipy import ChemSpider
@@ -141,6 +142,15 @@ async def on_ready():
     await bot.change_presence(game=discord.Game(name='c search'))
     print('ready')
 
+@bot.event
+async def on_command_error(ctx, exc):
+    e = getattr(exc, 'original', exc)
+    if isinstance(e, (commands.MissingRequiredArgument, commands.BadArgument)):
+        await ctx.invoke(bot.get_command('help'), ctx.command.name)
+    else:
+        tb = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
+        print(tb)
+
 @bot.command()
 async def search(ctx, *, query : str):
     """Searches the ChemSpider database for substances."""
@@ -174,10 +184,9 @@ async def meme(ctx):
     if not meme_channel:
         return
 
-    message = random.choice(await meme_channel.history(limit=1000).flatten())
+    messages = await meme_channel.history(limit=1000).flatten()
 
-    while not message.attachments:
-        message = random.choice(await meme_channel.history(limit=1000).flatten())
+    message = random.choice([x for x in messages if x.attachments])
 
     em = discord.Embed()
     em.color = 0xffa73d
@@ -187,7 +196,7 @@ async def meme(ctx):
     await attachment.save(b)
     b.seek(0)
     if attachment.height:
-        em.set_image(url=f'attachment://{attachment.filename}')
+        em.set_image(url=f'attachment://meme')
     await ctx.send(file=discord.File(b, attachment.filename), embed=em)
 
 
