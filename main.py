@@ -1,4 +1,6 @@
+import io
 import re
+import random
 import discord
 import asyncio
 import inspect
@@ -161,6 +163,35 @@ async def search(ctx, *, query : str):
         result = results[0]
 
     await ctx.send(embed=form_embed(result))
+
+@bot.command()
+async def meme(ctx):
+    """Sends a random message from the #chemistry-memes channel."""
+    if ctx.guild.id != 331215977117253634: return
+
+    meme_channel = discord.utils.get(ctx.guild.text_channels, name='chemistry-memes')
+    if not meme_channel: return
+
+    message = random.choice(await channel.history(limit=1000).flatten())
+
+    if message.attachments:
+        em = discord.Embed()
+        em.color = 0xffa73d
+
+        attachment = message.attachments[0]
+        b = io.BytesIO()
+        await attachment.save(b)
+        b.seek(0)
+        if attachment.height:
+            em.set_image(url=f'attachment://{attachment.filename}')
+
+        try:
+            await ctx.send(file=discord.File(b, attachment.filename), embed=em)
+        except:
+            pass
+        return
+
+    await ctx.send(message.content)
 
 @bot.command(hidden=True)
 @commands.is_owner()
