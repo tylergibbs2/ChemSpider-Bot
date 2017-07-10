@@ -23,7 +23,7 @@ five = '\N{DIGIT FIVE}\N{COMBINING ENCLOSING KEYCAP}'
 cancel = '\N{REGIONAL INDICATOR SYMBOL LETTER X}'
 next_page = '\N{BLACK RIGHT-POINTING TRIANGLE}'
 last_page = '\N{BLACK LEFT-POINTING TRIANGLE}'
-num_list = [one, two, three, four, five, next_page, last_page, cancel]
+num_list = [one, two, three, four, five, last_page, next_page, cancel]
 
 def format_formula(formula):
     """Takes a molecular formula and makes the numbers subscripts."""
@@ -66,16 +66,23 @@ async def match_result(results, ctx):
 
     list_msg = await ctx.send('Creating match form...')
 
+    for reaction in num_list[:len(result_pages[0])]:
+        await list_msg.add_reaction(reaction)
+    if page_count > 1:
+        await list_msg.add_reaction(last_page)
+        await list_msg.add_reaction(next_page)
+    await list_msg.add_reaction(cancel)
+
     while matching:
 
         em.description = ''
 
         for i, result in enumerate(result_pages[page]):
-            em.description += f'{num_list[i]}. {result.common_name}\n'
-        em.description += f'\n{num_list[7]}. Cancel'
+            em.description += f'{num_list[i]} {result.common_name}\n'
+        em.description += f'\n{num_list[7]} Cancel'
         if page_count > 1:
-            em.description += f'\n{num_list[5]}. Next Page'
-            em.description += f'\n{num_list[6]}. Previous Page'
+            em.description += f'\n{num_list[6]} Next Page'
+            em.description += f'\n{num_list[5]} Previous Page'
 
         em.set_footer(text=f'Page: {page+1}/{page_count}')
 
@@ -83,17 +90,6 @@ async def match_result(results, ctx):
             await list_msg.edit(content=' ', embed=em)
         except:
             matching = False
-
-        length = len(result_pages[page])
-        for emoji in num_list[:length]:
-            await list_msg.add_reaction(emoji)
-
-        rxn_list = [str(reaction) for reaction in list_msg.reactions]
-        if page_count > 1:
-            await list_msg.add_reaction(last_page)
-            await list_msg.add_reaction(next_page)
-        if cancel not in rxn_list:
-            await list_msg.add_reaction(cancel)
 
         def user_check(rxn, usr):
             return usr.id == ctx.author.id and rxn.message.id == list_msg.id and str(rxn) in num_list
@@ -107,11 +103,11 @@ async def match_result(results, ctx):
         index = num_list.index(str(reaction))
         if index == 7:
             matching = False
-        elif index == 5:
+        elif index == 6:
             page += 1
             if page > page_count:
                 page = page_count
-        elif index == 6:
+        elif index == 5:
             page -= 1
             if page < 0:
                 page = 0
