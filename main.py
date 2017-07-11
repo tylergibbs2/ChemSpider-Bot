@@ -174,32 +174,6 @@ async def search(ctx, *, query : str):
 
     await ctx.send(embed=form_embed(result))
 
-@bot.command()
-async def meme(ctx):
-    """Sends a random message from the #chemistry-memes channel."""
-    if ctx.guild.id != 331174943679315979:
-        return
-
-    meme_channel = discord.utils.get(ctx.guild.text_channels, name='chemistry-memes')
-    if not meme_channel:
-        return
-
-    messages = await meme_channel.history(limit=1000).flatten()
-
-    message = random.choice([x for x in messages if x.attachments])
-
-    em = discord.Embed()
-    em.color = 0xffa73d
-
-    attachment = message.attachments[0]
-    b = io.BytesIO()
-    await attachment.save(b)
-    b.seek(0)
-    if attachment.height:
-        em.set_image(url=f'attachment://meme')
-    await ctx.send(file=discord.File(b, attachment.filename), embed=em)
-
-
 @bot.command(hidden=True)
 @commands.is_owner()
 async def logout(ctx):
