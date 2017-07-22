@@ -88,6 +88,21 @@ class General:
 
         await ctx.send(f'Attempted to remove {major} from list of valid majors.')
 
+    @major.command()
+    async def clear(self, ctx):
+        """Attempts to clear all of your flairs."""
+        chem_roles = self.get_chem_roles()
+
+        to_remove = []
+        for role in ctx.author.roles:
+            if role.name in chem_roles:
+                to_remove.append(role)
+
+        if not to_remove:
+            return
+
+        await ctx.author.remove_roles(to_remove)
+
     def get_chem_roles(self):
         """Returns a list of chemistry majors from a file."""
         with open('chemMajors.txt') as f:
