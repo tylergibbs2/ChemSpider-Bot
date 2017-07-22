@@ -80,6 +80,12 @@ class General:
                 if line.lower() != major.lower():
                     f.write(f'{line}\n')
 
+        role = discord.utils.get(ctx.guild.roles, name=major)
+        try:
+            await role.delete()
+        except:
+            pass
+
         await ctx.send(f'Attempted to remove {major} from list of valid majors.')
 
     def get_chem_roles(self):
