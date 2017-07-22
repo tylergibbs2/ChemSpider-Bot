@@ -93,10 +93,7 @@ class General:
         """Attempts to clear all of your flairs."""
         chem_roles = self.get_chem_roles()
 
-        to_remove = []
-        for role in ctx.author.roles:
-            if role.name in chem_roles:
-                to_remove.append(role)
+        to_remove = [r for r in ctx.author.roles if r.name in chem_roles]
 
         if not to_remove:
             return
