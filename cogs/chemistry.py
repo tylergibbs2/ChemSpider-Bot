@@ -1,4 +1,5 @@
 import re
+import cirpy
 import asyncio
 import discord
 
@@ -41,7 +42,9 @@ class Chemistry:
         else:
             result = results[0]
 
-        await ctx.send(embed=self.form_embed(result))
+        cas = await self.bot.loop.run_in_executor(None, cirpy.resolve, result.smiles, 'cas')
+
+        await ctx.send(embed=self.form_embed(result, cas=cas))
 
     def format_formula(self, formula):
         """Takes a molecular formula and makes the numbers subscripts."""
@@ -55,9 +58,11 @@ class Chemistry:
 
         return sub
 
-    def form_embed(self, compound):
+    def form_embed(self, compound, **kwargs):
         em = discord.Embed()
         em.color = 0xffa73d
+
+        cas = kwargs.get('cas')
 
         base_url = r'http://www.chemspider.com/'
 
@@ -65,7 +70,13 @@ class Chemistry:
         em.url = f'{base_url}Chemical-Structure.{compound.csid}.html'
         em.description = self.format_formula(compound.molecular_formula)
 
-        em.add_field(name='Molecular Weight', value=str(compound.molecular_weight) + 'g')
+        em.add_field(name='Molecular Weight', value=f'{compound.molecular_weight}g')
+
+        if cas:
+            em.add_field(name='CAS Number(s)', value=', '.join(cas[:5]))
+            em.set_footer(text='Please note that CAS numbers may be provided \
+                                in a list format due to the inability to \
+                                check accuracy.')
 
         em.set_image(url=compound.image_url)
 
