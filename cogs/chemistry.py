@@ -23,7 +23,11 @@ class Chemistry:
 
     @commands.command()
     async def search(self, ctx, *, query : str):
-        """Searches the ChemSpider database for substances."""
+        """Searches the ChemSpider database for substances.
+
+        Please note that CAS numbers may be provided in a list
+        format due to the inability to check accuracy.
+        """
 
         results = self.cs.search(query)
 
@@ -73,10 +77,7 @@ class Chemistry:
         em.add_field(name='Molecular Weight', value=f'{compound.molecular_weight}g')
 
         if cas:
-            em.add_field(name='CAS Number(s)', value=', '.join(cas[:5]))
-            em.set_footer(text='Please note that CAS numbers may be provided \
-                                in a list format due to the inability to \
-                                check accuracy.')
+            em.add_field(name='Possible CAS Number(s)', value=', '.join(cas[:5]))
 
         em.set_image(url=compound.image_url)
 
