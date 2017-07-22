@@ -94,11 +94,10 @@ class General:
         chem_roles = self.get_chem_roles()
 
         to_remove = [r for r in ctx.author.roles if r.name in chem_roles]
-
         if not to_remove:
             return
 
-        await ctx.author.remove_roles(to_remove)
+        await ctx.author.remove_roles(*to_remove)
 
     def get_chem_roles(self):
         """Returns a list of chemistry majors from a file."""
