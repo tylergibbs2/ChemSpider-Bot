@@ -127,6 +127,9 @@ class General:
 
         await author.send('Please answer the following questions honestly.')
 
+        def author_check(msg):
+            return msg.author.id == author.id
+
         for question in enumerateself.application_questions:
             await author.send(question)
             try:
