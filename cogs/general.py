@@ -122,7 +122,7 @@ class General:
         em = discord.Embed()
         em.color = 0x4286f4
         a_url = author.avatar_url_as(format='png', size=1024)
-        em.set_footer(str(author), icon_url=a_url)
+        em.set_author(str(author), icon_url=a_url)
         em.description = ''
 
         await author.send('Please answer the following questions honestly.')
