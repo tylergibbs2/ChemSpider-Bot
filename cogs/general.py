@@ -130,7 +130,7 @@ class General:
         def author_check(msg):
             return msg.author.id == author.id
 
-        for question in enumerateself.application_questions:
+        for question in self.application_questions:
             await author.send(question)
             try:
                 resp = await self.bot.wait_for('message', check=author_check, timeout=300)
