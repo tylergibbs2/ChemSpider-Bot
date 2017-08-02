@@ -11,6 +11,12 @@ class General:
         self.yes_emoji = '\N{WHITE HEAVY CHECK MARK}'
         self.no_emoji = '\N{CROSS MARK}'
 
+        self.application_questions = [
+            'What experience do you have with Discord?',
+            'What experience do you have with Chemistry?',
+            'Why do you want to be a moderator?'
+        ]
+
     @commands.group(invoke_without_command=True)
     async def major(self, ctx, *, major : str=''):
         """Gives the user a role based on their area of interest."""
@@ -103,6 +109,35 @@ class General:
         """Returns a list of chemistry majors from a file."""
         with open('chemMajors.txt') as f:
             return f.read().splitlines()
+
+    @commands.command()
+    async def modapp(self, ctx):
+        """Starts the application process."""
+        mod_app_channel = discord.utils.get(ctx.guild.text_channels, id=342325108750155777)
+        if not mod_app_channel:
+            return
+
+        author = ctx.author
+
+        em = discord.Embed()
+        em.color = 0x4286f4
+        a_url = author.avatar_url_as(format='png', size=1024)
+        em.set_footer(str(author), icon_url=a_url)
+        em.description = ''
+
+        await author.send('Please answer the following questions honestly.')
+
+        for question in enumerateself.application_questions:
+            await author.send(question)
+            try:
+                resp = await self.bot.wait_for('message', check=author_check, timeout=300)
+            except asyncio.TimeoutError:
+                return
+            em.description += f'{question}:\n{resp.content}\n\n'
+
+        await author.send('Thank you for submitting an application.')
+
+        await mod_app_channel.send(embed=em)
 
 def setup(bot):
     bot.add_cog(General(bot))
