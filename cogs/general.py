@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from fuzzywuzzy import process
 
+
 class General:
     def __init__(self, bot):
         self.bot = bot
@@ -18,7 +19,7 @@ class General:
         ]
 
     @commands.group(invoke_without_command=True)
-    async def major(self, ctx, *, major : str=''):
+    async def major(self, ctx, *, major: str=''):
         """Gives the user a role based on their area of interest."""
 
         em = discord.Embed()
@@ -39,7 +40,7 @@ class General:
 
         em.title = match_name
         em.description = f'{match_perc}% match!\n\n' \
-                        'Is this correct?'
+                         f'Is this correct?'
 
         match_msg = await ctx.send(embed=em)
 
@@ -68,7 +69,7 @@ class General:
 
     @major.command()
     @commands.has_permissions(administrator=True)
-    async def add(self, ctx, *, major : str):
+    async def add(self, ctx, *, major: str):
         """Adds a major to the list of valid majors."""
         with open('chemMajors.txt', 'a') as f:
             f.write(f'\n{major}')
@@ -77,7 +78,7 @@ class General:
 
     @major.command()
     @commands.has_permissions(administrator=True)
-    async def remove(self, ctx, *, major : str):
+    async def remove(self, ctx, *, major: str):
         """Adds a major to the list of valid majors."""
         with open('chemMajors.txt', 'r') as f:
             lines = f.read().splitlines()
@@ -141,6 +142,7 @@ class General:
         await author.send('Thank you for submitting an application.')
 
         await mod_app_channel.send(embed=em)
+
 
 def setup(bot):
     bot.add_cog(General(bot))

@@ -1,4 +1,3 @@
-import re
 import discord
 import traceback
 
@@ -13,16 +12,17 @@ bot = commands.Bot(command_prefix=['c ', 'C '], description=description)
 bot.cs = ChemSpider(creds['chemspider'])
 
 startup_cogs = [
-    'cogs.moderation',
     'cogs.chemistry',
     'cogs.general',
     'cogs.admin'
     ]
 
+
 @bot.event
 async def on_ready():
     await bot.change_presence(game=discord.Game(name='c search'))
     print('ready')
+
 
 @bot.event
 async def on_command_error(ctx, exc):

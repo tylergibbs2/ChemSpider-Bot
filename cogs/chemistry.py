@@ -36,9 +36,6 @@ class Chemistry:
         if not results:
             return await ctx.send(f'{query} not found.')
 
-        def user_check(msg):
-            return msg.author == ctx.author
-
         if len(results) != 1:
             result = await self.match_result(results, ctx)
             if not result:
@@ -164,6 +161,7 @@ class Chemistry:
             return
 
         return result
+
 
 def setup(bot):
     bot.add_cog(Chemistry(bot))

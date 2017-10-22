@@ -1,8 +1,7 @@
-import datetime
-import discord
 import inspect
 
 from discord.ext import commands
+
 
 class Admin:
     def __init__(self, bot):
@@ -16,37 +15,37 @@ class Admin:
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def load(self, ctx, *, module : str):
+    async def load(self, ctx, *, ext: str):
         """Loads a cog."""
         try:
-            self.bot.load_extension(module)
+            self.bot.load_extension(ext)
         except Exception as e:
             await ctx.send(content='{}: {}'.format(type(e).__name__, e))
         else:
-            await ctx.send(content=f'{module} loaded.')
+            await ctx.send(content=f'{ext} loaded.')
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def unload(self, ctx, *, module : str):
+    async def unload(self, ctx, *, ext: str):
         """Unloads a cog."""
         try:
-            self.bot.unload_extension(module)
+            self.bot.unload_extension(ext)
         except Exception as e:
             await ctx.send(content='{}: {}'.format(type(e).__name__, e))
         else:
-            await ctx.send(content=f'{module} unloaded.')
+            await ctx.send(content=f'{ext} unloaded.')
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def reload(self, ctx, *, module : str):
+    async def reload(self, ctx, *, ext: str):
         """Reloads a cog."""
         try:
-            self.bot.unload_extension(module)
-            self.bot.load_extension(module)
+            self.bot.unload_extension(ext)
+            self.bot.load_extension(ext)
         except Exception as e:
             await ctx.send(content='{}: {}'.format(type(e).__name__, e))
         else:
-            await ctx.send(content=f'{module} reloaded.')
+            await ctx.send(content=f'{ext} reloaded.')
 
     @commands.command(hidden=True)
     @commands.is_owner()
@@ -55,7 +54,6 @@ class Admin:
 
         code = code.strip('` ')
         python = '```py\n{}\n```'
-        result = None
 
         env = {
             'bot': self.bot,
@@ -77,6 +75,7 @@ class Admin:
             return
 
         await ctx.send(python.format(result))
+
 
 def setup(bot):
     bot.add_cog(Admin(bot))
