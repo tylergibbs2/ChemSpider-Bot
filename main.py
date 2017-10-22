@@ -16,7 +16,8 @@ bot.cs = ChemSpider(creds['chemspider'])
 startup_cogs = [
     'cogs.chemistry',
     'cogs.general',
-    'cogs.admin'
+    'cogs.admin',
+    'cogs.karma'
     ]
 
 
