@@ -1,9 +1,9 @@
-import re
-import cirpy
 import asyncio
-import discord
+import re
 
 from discord.ext import commands
+import discord
+import cirpy
 
 
 class Chemistry:

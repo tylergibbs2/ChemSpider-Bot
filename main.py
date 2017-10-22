@@ -1,9 +1,11 @@
-import discord
 import traceback
 
-from utils import config
 from chemspipy import ChemSpider
 from discord.ext import commands
+import discord
+
+from utils import config
+
 
 description = 'A simple chemistry bot for searching the ChemSpider api.'
 creds = config.Config('credentials.json')

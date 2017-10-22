@@ -1,8 +1,8 @@
 import asyncio
-import discord
 
 from discord.ext import commands
 from fuzzywuzzy import process
+import discord
 
 
 class General:
