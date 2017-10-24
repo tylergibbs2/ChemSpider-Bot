@@ -39,8 +39,9 @@ class Karma:
 
         await self.karma_storage.put(rxn.message.author.id, current_karma)
 
-    @commands.command()
+    @commands.group(invoke_without_command=True)
     async def karma(self, ctx, user: discord.Member=None):
+        """View the karma of yourself or another user."""
         if user is None:
             user = ctx.message.author
 
@@ -50,6 +51,21 @@ class Karma:
         em.color = discord.Color.blurple()
         em.set_author(name=str(user), icon_url=user.avatar_url_as(format='png'))
         em.add_field(name='Karma', value=str(cur_karma))
+
+        await ctx.send(embed=em)
+
+    @karma.command(name='top')
+    async def k_top(self, ctx):
+        """View the users with the top karma in the guild."""
+        all_karma = self.karma_storage.all()
+        top_five = sorted(all_karma, key=all_karma.get, reverse=True)[:5]
+        top_five_users = [discord.utils.get(ctx.guild.members, id=int(item)) for item in top_five]
+
+        em = discord.Embed()
+        em.color = discord.Color.blurple()
+        em.title = 'Top Karma Users'
+        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)'
+                                    for (i, m) in enumerate(top_five_users) if m is not None])
 
         await ctx.send(embed=em)
 
