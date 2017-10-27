@@ -54,7 +54,7 @@ class Karma:
 
         await ctx.send(embed=em)
 
-    @karma.command(name='top')
+    @karma.command(name='top', aliases=['highest'])
     async def k_top(self, ctx):
         """View the users with the top karma in the guild."""
         all_karma = self.karma_storage.all()
@@ -64,6 +64,21 @@ class Karma:
         em = discord.Embed()
         em.color = discord.Color.blurple()
         em.title = 'Top Karma Users'
+        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)'
+                                    for (i, m) in enumerate(top_five_users) if m is not None])
+
+        await ctx.send(embed=em)
+
+    @karma.command(name='bottom', aliases=['lowest'])
+    async def k_bottom(self, ctx):
+        """View the users with the lowest karma in the guild."""
+        all_karma = self.karma_storage.all()
+        top_five = sorted(all_karma, key=all_karma.get)[:5]
+        top_five_users = [discord.utils.get(ctx.guild.members, id=int(item)) for item in top_five]
+
+        em = discord.Embed()
+        em.color = discord.Color.blurple()
+        em.title = 'Bottom Karma Users'
         em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)'
                                     for (i, m) in enumerate(top_five_users) if m is not None])
 
