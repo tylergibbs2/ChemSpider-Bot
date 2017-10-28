@@ -64,8 +64,9 @@ class Karma:
         em = discord.Embed()
         em.color = discord.Color.blurple()
         em.title = 'Top Karma Users'
-        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)'
-                                    for (i, m) in enumerate(top_five_users) if m is not None])
+        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)' if m is not None else
+                                    f'{i+1}. User not in Server ({all_karma[str(m.id)]} karma)'
+                                    for (i, m) in enumerate(top_five_users)])
 
         await ctx.send(embed=em)
 
@@ -79,8 +80,9 @@ class Karma:
         em = discord.Embed()
         em.color = discord.Color.blurple()
         em.title = 'Bottom Karma Users'
-        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)'
-                                    for (i, m) in enumerate(top_five_users) if m is not None])
+        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)' if m is not None else
+                                    f'{i+1}. User not in Server ({all_karma[str(m.id)]} karma)'
+                                    for (i, m) in enumerate(top_five_users)])
 
         await ctx.send(embed=em)
 
