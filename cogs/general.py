@@ -27,7 +27,7 @@ class General:
             await member.send(f"Welcome, {member.name}!\n\nDon't forget to read the {server_rules_channel.mention} "
                               f" and assign yourself a major in order to access {homework_help_channel.mention}"
                               f" (preferably in the {bot_cmds_channel.mention} channel)!\n\nTo assign yourself a "
-                              f"major, type `c major <majorname> using one of the valid majors below."
+                              f"major, type `c major <majorname>` using one of the valid majors below."
                               f"\n\n**Valid Majors**{role_display}")
         except:
             pass
