@@ -18,6 +18,17 @@ class General:
             'Why do you want to be a moderator?'
         ]
 
+    async def on_member_join(self, member):
+        bot_cmds_channel = discord.utils.get(member.guild.text_channels, name="botcommands")
+        server_rules_channel = discord.utils.get(member.guild.text_channels, name="server-rules")
+        homework_help_channel = discord.utils.get(member.guild.text_channels, name="homeworkhelp")
+        try:
+            await member.send(f"Welcome, {member.name}!\n\nDon't forget to read the {server_rules_channel.mention} "
+                              f" and assign yourself a major in order to access {homework_help_channel.mention}"
+                              f" (preferably in the {bot_cmds_channel.mention} channel) !")
+        except:
+            pass
+
     @commands.group(invoke_without_command=True)
     async def major(self, ctx, *, major: str=''):
         """Gives the user a role based on their area of interest."""
