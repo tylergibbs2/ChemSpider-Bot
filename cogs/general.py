@@ -22,14 +22,18 @@ class General:
         bot_cmds_channel = discord.utils.get(member.guild.text_channels, name="botcommands")
         server_rules_channel = discord.utils.get(member.guild.text_channels, name="server-rules")
         homework_help_channel = discord.utils.get(member.guild.text_channels, name="homeworkhelp")
+        role_display = '\n'.join(sorted(self.get_chem_roles()))
         try:
             await member.send(f"Welcome, {member.name}!\n\nDon't forget to read the {server_rules_channel.mention} "
                               f" and assign yourself a major in order to access {homework_help_channel.mention}"
-                              f" (preferably in the {bot_cmds_channel.mention} channel) !")
+                              f" (preferably in the {bot_cmds_channel.mention} channel)!\n\nTo assign yourself a "
+                              f"major, type `c major <majorname> using one of the valid majors below."
+                              f"\n\n**Valid Majors**\n{role_display}")
         except:
             pass
 
     @commands.group(invoke_without_command=True)
+    @commands.guild_only()
     async def major(self, ctx, *, major: str=''):
         """Gives the user a role based on their area of interest."""
 
