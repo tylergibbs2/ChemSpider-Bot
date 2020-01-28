@@ -1,4 +1,4 @@
 *.pyc
-credentials.json
+config.py
 
 \.idea/

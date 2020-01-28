@@ -1,3 +1,5 @@
-chemspipy==1.0.5
-fuzzywuzzy==0.15.1
+chemspipy==2.0.0
+fuzzywuzzy==0.17.0
 cirpy==1.0.2
+asyncpg==0.20.1
+jishaku==1.17.1.181

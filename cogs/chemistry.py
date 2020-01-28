@@ -6,7 +6,7 @@ import discord
 import cirpy
 
 
-class Chemistry:
+class Chemistry(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.cs = bot.cs
@@ -22,7 +22,7 @@ class Chemistry:
         self.num_list = [one, two, three, four, five, self.last_page, self.next_page, self.cancel]
 
     @commands.command()
-    async def search(self, ctx, *, query : str):
+    async def search(self, ctx, *, query: str):
         """Searches the ChemSpider database for substances.
 
         Please note that CAS numbers may be provided in a list

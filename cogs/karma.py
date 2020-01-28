@@ -1,43 +1,36 @@
 from discord.ext import commands
 import discord
 
-from utils import config
 
-
-class Karma:
+class Karma(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.karma_storage = config.Config('karma.json')
 
-    async def on_reaction_add(self, rxn, user):
-        if rxn.emoji.name not in ['upvote', 'downvote']:
+    @commands.Cog.listener()
+    async def on_reaction_add(self, rxn, usr):
+        if not isinstance(rxn.emoji, discord.Emoji) or rxn.emoji.name not in ['upvote', 'downvote']:
             return
 
-        if rxn.message.author.id == user.id:
+        if rxn.message.author.id == usr.id:
             return
 
-        current_karma = self.karma_storage.get(rxn.message.author.id, 0)
-        if rxn.emoji.name == 'upvote':
-            current_karma += 1
-        elif rxn.emoji.name == 'downvote':
-            current_karma -= 1
+        async with self.bot.db_pool.acquire() as con:
+            await con.execute("""
+            INSERT INTO karma (message_id, karma_type, giver, receiver) VALUES ($1, $2, $3, $4);
+        """, rxn.message.id, rxn.emoji.name, usr.id, rxn.message.author.id)
 
-        await self.karma_storage.put(rxn.message.author.id, current_karma)
-
-    async def on_reaction_remove(self, rxn, user):
-        if rxn.emoji.name not in ['upvote', 'downvote']:
+    @commands.Cog.listener()
+    async def on_reaction_remove(self, rxn, usr):
+        if not isinstance(rxn.emoji, discord.Emoji) or rxn.emoji.name not in ['upvote', 'downvote']:
             return
 
-        if rxn.message.author.id == user.id:
+        if rxn.message.author.id == usr.id:
             return
 
-        current_karma = self.karma_storage.get(rxn.message.author.id, 0)
-        if rxn.emoji.name == 'upvote':
-            current_karma -= 1
-        elif rxn.emoji.name == 'downvote':
-            current_karma += 1
-
-        await self.karma_storage.put(rxn.message.author.id, current_karma)
+        async with self.bot.db_pool.acquire() as con:
+            await con.execute("""
+                DELETE FROM karma WHERE message_id=$1 AND karma_type=$2 AND giver=$3 AND receiver=$4;
+            """, rxn.message.id, rxn.emoji.name, usr.id, rxn.message.author.id)
 
     @commands.group(invoke_without_command=True)
     async def karma(self, ctx, user: discord.Member=None):
@@ -45,44 +38,63 @@ class Karma:
         if user is None:
             user = ctx.message.author
 
-        cur_karma = self.karma_storage.get(user.id, 0)
+        karma = await ctx.con.fetchval("""
+            SELECT get_karma($1);
+        """, user.id)
 
         em = discord.Embed()
         em.color = discord.Color.blurple()
         em.set_author(name=str(user), icon_url=user.avatar_url_as(format='png'))
-        em.add_field(name='Karma', value=str(cur_karma))
+        em.add_field(name='Karma', value=str(karma))
 
         await ctx.send(embed=em)
 
     @karma.command(name='top', aliases=['highest'])
     async def k_top(self, ctx):
         """View the users with the top karma in the guild."""
-        all_karma = self.karma_storage.all()
-        top_five = sorted(all_karma, key=all_karma.get, reverse=True)[:5]
-        top_five_users = [discord.utils.get(ctx.guild.members, id=int(item)) for item in top_five]
-
+        users = await ctx.con.fetch("""
+            SELECT DISTINCT receiver, get_karma(receiver) as karma_ct FROM karma ORDER BY karma_ct DESC LIMIT 5;
+        """)
+        
         em = discord.Embed()
         em.color = discord.Color.blurple()
         em.title = 'Top Karma Users'
-        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)' if m is not None else
-                                    f'{i+1}. User not in Server'
-                                    for (i, m) in enumerate(top_five_users)])
+        em.description = ''
+        for i, user in enumerate(users):
+            user_obj = self.bot.get_user(user["receiver"])
+            if user_obj is None:
+                user_obj = await self.bot.fetch_user(user["receiver"])
+
+            if user_obj is None:
+                user_display = "*Deleted User*"
+            else:
+                user_display = user_obj.mention
+
+            em.description += f"{i+1}. {user_display} ({user['karma_ct']} karma)\n"
 
         await ctx.send(embed=em)
 
     @karma.command(name='bottom', aliases=['lowest'])
     async def k_bottom(self, ctx):
         """View the users with the lowest karma in the guild."""
-        all_karma = self.karma_storage.all()
-        top_five = sorted(all_karma, key=all_karma.get)[:5]
-        top_five_users = [discord.utils.get(ctx.guild.members, id=int(item)) for item in top_five]
-
+        users = await ctx.con.fetch("""
+            SELECT DISTINCT receiver, get_karma(receiver) as karma_ct FROM karma ORDER BY karma_ct ASC LIMIT 5;
+        """)
+        
         em = discord.Embed()
         em.color = discord.Color.blurple()
-        em.title = 'Bottom Karma Users'
-        em.description = '\n'.join([f'{i+1}. {m.mention} ({all_karma[str(m.id)]} karma)' if m is not None else
-                                    f'{i+1}. User not in Server'
-                                    for (i, m) in enumerate(top_five_users)])
+        em.title = 'Top Karma Users'
+        em.description = ''
+        for i, user in enumerate(users):
+            user_obj = self.bot.get_user(user["receiver"])
+            if user_obj is None:
+                user_obj = await self.bot.fetch_user(user["receiver"])
+
+            if user_obj is None:
+                user_display = "*Deleted User*"
+            else:
+                user_display = user_obj.mention
+            em.description += f"{i+1}. {user_display} ({user['karma_ct']} karma)\n"
 
         await ctx.send(embed=em)
 
