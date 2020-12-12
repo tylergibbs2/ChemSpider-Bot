@@ -102,13 +102,13 @@ class General(commands.Cog):
         """, new_role.id, major)
 
         await ctx.send(f'**{major}** added to list of valid roles.')
-        
+
 
     @major.command()
     @commands.has_permissions(administrator=True)
     async def remove(self, ctx, *, major: str):
         """Removes a major from the list of valid majors.
-        
+
         The name must be exact. Case-sensitive.
         """
         role_id = await ctx.con.fetchval("""

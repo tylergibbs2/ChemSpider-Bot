@@ -1,0 +1,12 @@
+services:
+  chemspiderbot:
+    image: tylergibbs2/chemspiderbot
+    container_name: chemspiderbot
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /opt/appdata/chemspiderbot/config.py:/app/config.py
+    depends_on:
+      - postgres
+    restart: unless-stopped

@@ -38,9 +38,11 @@ class ChemSpiderBot(commands.Bot):
             print(tb)
 
 
-description = 'A simple chemistry bot for searching the ChemSpider api.'
+description = 'A simple chemistry bot for searching the ChemSpider API.'
 
-bot = ChemSpiderBot(command_prefix=['c ', 'C '], description=description)
+intents = discord.Intents.default()
+
+bot = ChemSpiderBot(command_prefix=['c ', 'C '], description=description, intents=intents)
 bot.cs = ChemSpider(config.CHEMSPIDER)
 bot.db_pool = bot.loop.run_until_complete(asyncpg.create_pool(config.PSQL_DSN))
 

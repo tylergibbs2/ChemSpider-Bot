@@ -55,7 +55,7 @@ class Karma(commands.Cog):
         users = await ctx.con.fetch("""
             SELECT DISTINCT receiver, get_karma(receiver) as karma_ct FROM karma ORDER BY karma_ct DESC LIMIT 5;
         """)
-        
+
         em = discord.Embed()
         em.color = discord.Color.blurple()
         em.title = 'Top Karma Users'
@@ -80,7 +80,7 @@ class Karma(commands.Cog):
         users = await ctx.con.fetch("""
             SELECT DISTINCT receiver, get_karma(receiver) as karma_ct FROM karma ORDER BY karma_ct ASC LIMIT 5;
         """)
-        
+
         em = discord.Embed()
         em.color = discord.Color.blurple()
         em.title = 'Top Karma Users'
