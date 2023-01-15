@@ -1,4 +1,10 @@
+from __future__ import annotations
+
 import asyncio
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from main import ChemSpiderBot
 
 from discord.ext import commands
 from fuzzywuzzy import process
@@ -22,7 +28,7 @@ class General(commands.Cog):
                               f" and assign yourself a major in order to access {homework_help_channel.mention}"
                               f" (preferably in the {bot_cmds_channel.mention} channel)!\n\nTo assign yourself a "
                               f"major, type `c major <majorname>`.")
-        except:
+        except Exception:
             pass
 
     @commands.group(invoke_without_command=True, aliases=["role"])
@@ -44,13 +50,11 @@ class General(commands.Cog):
             return await ctx.send(embed=em)
 
         matches = process.extract(major, role_names, limit=3)
-        match = list(max(matches, key=lambda x: x[1]))
+        name, percent = list(max(matches, key=lambda x: x[1]))
 
-        match_name, match_perc = match
-
-        if match_perc != 100:
-            em.title = match_name
-            em.description = f'{match_perc}% match!\n\n' \
+        if percent != 100:
+            em.title = name  # type: ignore
+            em.description = f'{percent}% match!\n\n' \
                             f'Is this correct?'
 
             match_msg = await ctx.send(embed=em)
@@ -64,7 +68,7 @@ class General(commands.Cog):
                 return False
 
             try:
-                rxn, user = await self.bot.wait_for('reaction_add', check=reaction_check, timeout=60)
+                rxn, _ = await self.bot.wait_for('reaction_add', check=reaction_check, timeout=60)
             except asyncio.TimeoutError:
                 return await match_msg.delete()
             await match_msg.delete()
@@ -72,7 +76,7 @@ class General(commands.Cog):
             if str(rxn) == self.no_emoji:
                 return
 
-        index = role_names.index(match_name)
+        index = role_names.index(name)
         role_id = roles[index]["role_id"]
         role = ctx.guild.get_role(role_id)
         if not role:
@@ -86,7 +90,7 @@ class General(commands.Cog):
         await ctx.message.add_reaction(self.yes_emoji)
 
     @major.command()
-    @commands.has_permissions(administrator=True)
+    @commands.has_permissions(manage_roles=True)
     async def add(self, ctx, *, major: str):
         """Adds a major to the list of valid majors."""
         roles = await ctx.con.fetch("""
@@ -105,7 +109,7 @@ class General(commands.Cog):
 
 
     @major.command()
-    @commands.has_permissions(administrator=True)
+    @commands.has_permissions(manage_roles=True)
     async def remove(self, ctx, *, major: str):
         """Removes a major from the list of valid majors.
 
@@ -138,5 +142,5 @@ class General(commands.Cog):
         await ctx.message.add_reaction(self.yes_emoji)
 
 
-def setup(bot):
-    bot.add_cog(General(bot))
+async def setup(bot: ChemSpiderBot):
+    await bot.add_cog(General(bot))

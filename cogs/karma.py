@@ -1,3 +1,10 @@
+from __future__ import annotations
+
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from main import ChemSpiderBot
+
 from discord.ext import commands
 import discord
 
@@ -33,18 +40,17 @@ class Karma(commands.Cog):
             """, rxn.message.id, rxn.emoji.name, usr.id, rxn.message.author.id)
 
     @commands.group(invoke_without_command=True)
-    async def karma(self, ctx, user: discord.Member=None):
+    async def karma(self, ctx, user: Optional[discord.Member] = None):
         """View the karma of yourself or another user."""
-        if user is None:
-            user = ctx.message.author
+        who_to_check = ctx.message.author if user is None else user
 
         karma = await ctx.con.fetchval("""
             SELECT get_karma($1);
-        """, user.id)
+        """, who_to_check.id)
 
         em = discord.Embed()
         em.color = discord.Color.blurple()
-        em.set_author(name=str(user), icon_url=user.avatar_url_as(format='png'))
+        em.set_author(name=str(who_to_check), icon_url=who_to_check.display_avatar.url)
         em.add_field(name='Karma', value=str(karma))
 
         await ctx.send(embed=em)
@@ -99,5 +105,5 @@ class Karma(commands.Cog):
         await ctx.send(embed=em)
 
 
-def setup(bot):
-    bot.add_cog(Karma(bot))
+async def setup(bot: ChemSpiderBot):
+    await bot.add_cog(Karma(bot))

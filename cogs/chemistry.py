@@ -1,5 +1,11 @@
+from __future__ import annotations
+
 import asyncio
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from main import ChemSpiderBot
 
 from discord.ext import commands
 import discord
@@ -103,8 +109,8 @@ class Chemistry(commands.Cog):
             await list_msg.add_reaction(self.next_page)
         await list_msg.add_reaction(self.cancel)
 
+        index = 0
         while matching:
-
             em.description = ''
 
             for i, result in enumerate(result_pages[page]):
@@ -118,7 +124,7 @@ class Chemistry(commands.Cog):
 
             try:
                 await list_msg.edit(content=' ', embed=em)
-            except:
+            except Exception:
                 matching = False
 
             def user_check(rxn, usr):
@@ -129,6 +135,7 @@ class Chemistry(commands.Cog):
             except asyncio.TimeoutError:
                 await list_msg.delete()
                 matching = False
+                break
 
             index = self.num_list.index(str(reaction))
             if index == 7:
@@ -146,7 +153,7 @@ class Chemistry(commands.Cog):
 
             try:
                 await list_msg.remove_reaction(reaction.emoji, member)
-            except:
+            except Exception:
                 pass
 
         else:
@@ -163,5 +170,5 @@ class Chemistry(commands.Cog):
         return result
 
 
-def setup(bot):
-    bot.add_cog(Chemistry(bot))
+async def setup(bot: ChemSpiderBot):
+    await bot.add_cog(Chemistry(bot))
